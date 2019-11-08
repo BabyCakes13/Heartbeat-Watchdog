@@ -33,7 +33,7 @@ class HeartbeatServer:
             except socket.timeout:
                 pass
             except KeyboardInterrupt:
-                pass
+                break
 
     def set_connection(self):
         connection, addrport = self.socket.accept()
@@ -65,10 +65,6 @@ class HeartbeatServer:
             data = connection.recv(self.BUFFER_SIZE)
         except socket.timeout:
             logging.critical("TIMEOUT ", self.TIMEOUT, " seconds.")
-
-        if not data:
-            logging.info("No data received.")
-            return None
 
         logging.debug("Address: " + str(address) + "; raw data: " + str(data))
         return data
