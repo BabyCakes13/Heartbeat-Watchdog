@@ -10,8 +10,8 @@ class HeartbeatServer:
     TCP_IP = ''
     TCP_PORT = 5000
     BUFFER_SIZE = 1024
-    TIMEOUT = 0.1
-    HEARTBEAT_FAILURE_TIME = 3
+    TIMEOUT = 0.5
+    HEARTBEAT_DISCONNECT_TIME = 3
 
     def __init__(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,14 +29,12 @@ class HeartbeatServer:
             try:
                 while 1:
                     self.set_connection()
-                    self.check_heartbeats()
             except socket.timeout:
-                pass
-            except KeyboardInterrupt:
-                break
+                self.check_heartbeats()
 
     def set_connection(self):
         connection, addrport = self.socket.accept()
+        connection.settimeout(self.TIMEOUT)
         address = addrport[0]
 
         if address not in self.timestamps:
@@ -46,7 +44,7 @@ class HeartbeatServer:
         logging.debug("Timestamp addresses: " + str(self.timestamps.keys()))
 
         while 1:
-            data = self.receive_data(connection=connection, address=address)
+            data = self.receive_data(connection=connection)
             if not data:
                 break
             received_heartbeat = int.from_bytes(data, byteorder="little")
@@ -55,18 +53,14 @@ class HeartbeatServer:
             self.heartbeats[address] = received_heartbeat
             logging.info("HEARTBEAT: " + str(address) + " (" + str(self.heartbeats.get(address)) + ")")
 
-        # connection.close()
+        connection.close()
 
-    def receive_data(self, connection, address):
-        connection.settimeout(self.TIMEOUT)
-
+    def receive_data(self, connection):
         data = None
         try:
             data = connection.recv(self.BUFFER_SIZE)
         except socket.timeout:
             logging.critical("TIMEOUT ", self.TIMEOUT, " seconds.")
-
-        logging.debug("Address: " + str(address) + "; raw data: " + str(data))
         return data
 
     def handle_reconnect(self, received_heartbeat, address):
@@ -79,11 +73,17 @@ class HeartbeatServer:
 
     def check_heartbeats(self):
         logging.debug("Checking all the client heartbeats.")
-        for address, heartbeat_counter in self.heartbeats.items():
-            time_difference = time.time() - self.timestamps[address]
-            logging.debug("TIME DIFFERENCE: " + str(time_difference) + " HEARTBEATS: " + str(heartbeat_counter))
 
-            if time_difference > heartbeat_counter + self.HEARTBEAT_FAILURE_TIME:
+        for address, heartbeat_counter in self.heartbeats.items():
+            logging.debug("Checking " + str(address) + " with current heartbeat " + str(heartbeat_counter))
+
+            time_difference = time.time() - self.timestamps[address]
+
+            logging.debug("TIME DIFFERENCE: " + str(time_difference) + " HEARTBEATS: " + str(heartbeat_counter))
+            logging.debug("HEARTBEAT DIFFERENCE: " + str(heartbeat_counter + self.HEARTBEAT_DISCONNECT_TIME))
+
+            if time_difference > heartbeat_counter + self.HEARTBEAT_DISCONNECT_TIME:
+                logging.debug("FOUND")
                 logging.critical("DISCONNECTED: " + str(address))
 
 
