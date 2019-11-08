@@ -10,7 +10,7 @@ class HeartbeatServer:
     TCP_IP = ''
     TCP_PORT = 5000
     BUFFER_SIZE = 1024
-    TIMEOUT = 0.5
+    TIMEOUT = 0.1
     HEARTBEAT_DISCONNECT_TIME = 3
 
     def __init__(self):
@@ -22,15 +22,15 @@ class HeartbeatServer:
         self.heartbeats = {}
         self.timestamps = {}
 
-        logging.basicConfig(format='%(levelname)s: %(asctime)s %(message)s', level=logging.INFO)
+        logging.basicConfig(format='%(levelname)s: %(asctime)s %(message)s', level=logging.DEBUG)
 
     def start_server(self):
         while 1:
             try:
-                while 1:
-                    self.set_connection()
+                self.set_connection()
             except socket.timeout:
-                self.check_heartbeats()
+                pass
+            self.check_heartbeats()
 
     def set_connection(self):
         connection, addrport = self.socket.accept()
@@ -61,7 +61,7 @@ class HeartbeatServer:
         try:
             data = connection.recv(self.BUFFER_SIZE)
         except socket.timeout:
-            logging.critical("TIMEOUT ", self.TIMEOUT, " seconds.")
+            logging.critical("TIMEOUT receive data from client ", self.TIMEOUT, " seconds.")
         return data
 
     def handle_reconnect(self, received_heartbeat, address):
