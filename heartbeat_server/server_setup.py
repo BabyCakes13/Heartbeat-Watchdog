@@ -45,10 +45,11 @@ class HeartbeatServer:
 
         logging.debug("Timestamp addresses: " + str(self.timestamps.keys()))
 
-        data = 0
-        while data:
+        while 1:
             data = self.receive_data(connection=connection, address=address)
-            received_heartbeat = int.from_bytes(data)
+            if not data:
+                break
+            received_heartbeat = int.from_bytes(data, byteorder="little")
 
             self.handle_reconnect(received_heartbeat=received_heartbeat, address=address)
             self.heartbeats[address] = received_heartbeat
