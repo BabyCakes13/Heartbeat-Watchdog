@@ -1,0 +1,12 @@
+[Unit]
+Description=Heartbeat Client
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/usr/local/bin
+ExecStart=/usr/bin/python3 /usr/local/bin/heartbeat_client.py whatsoever
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
