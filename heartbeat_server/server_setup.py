@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+
 import socket
 import logging
 import time
@@ -28,7 +31,9 @@ class HeartbeatServer:
                     self.set_connection()
                     self.check_heartbeats()
             except socket.timeout:
-                logging.critical("Could not connect.")
+                pass
+            except KeyboardInterrupt:
+                pass
 
     def set_connection(self):
         connection, addrport = self.socket.accept()
@@ -83,3 +88,8 @@ class HeartbeatServer:
 
             if time_difference > heartbeat_counter + self.HEARTBEAT_FAILURE_TIME:
                 logging.critical("DISCONNECTED: " + str(address))
+
+
+if __name__ == "__main__":
+    server = HeartbeatServer()
+    server.start_server()
