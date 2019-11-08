@@ -40,6 +40,7 @@ class HeartbeatServer:
         if address not in self.timestamps:
             self.timestamps[address] = time.time()
             logging.info("FIRST CONNECTION " + str(address) + " ( " + str(self.timestamps[address]) + ")")
+            logging.info("CONNECTED CLIENTS: " + str(self.timestamps.keys()))
 
         logging.debug("Timestamp addresses: " + str(self.timestamps.keys()))
 
