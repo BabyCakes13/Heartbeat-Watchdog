@@ -11,6 +11,7 @@ for i in {0..5}
 do
 	echo
 #   gcloud compute instances create --zone $ZONE --image-family centos-8 --image-project=centos-cloud centos-test-$i
+    gcloud compute ssh centos-test-$i -- sudo systemctl stop heartbeat\*
 done
 echo "Completed creating instances."
 echo "Starting to copy client and server python applications on the instances..."
