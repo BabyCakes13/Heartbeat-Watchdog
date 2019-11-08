@@ -4,6 +4,9 @@ CENTRALISED="0"
 
 echo "Startig to create instances..."
 ZONE=europe-west1-d
+
+gcloud config set compute/zone $ZONE
+
 for i in {0..5}
 do
 	echo
