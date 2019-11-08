@@ -1,5 +1,7 @@
 #!/bin/bash
 
+NUM=5
+
 CENTRALISED="0"
 
 echo "Startig to create instances..."
@@ -7,7 +9,7 @@ ZONE=europe-west1-d
 
 gcloud config set compute/zone $ZONE
 
-for i in {0..5}
+for i in $(seq 0 $NUM)
 do
 	echo
 #   gcloud compute instances create --zone $ZONE --image-family centos-8 --image-project=centos-cloud centos-test-$i
@@ -15,7 +17,7 @@ do
 done
 echo "Completed creating instances."
 echo "Starting to copy client and server python applications on the instances..."
-for i in {0..5} 
+for i in $(seq 0 $NUM)
 do
    gcloud compute ssh centos-test-$i -- mkdir /tmp/heartbeat/
    gcloud compute scp *.py *.service centos-test-$i:/tmp/heartbeat/
