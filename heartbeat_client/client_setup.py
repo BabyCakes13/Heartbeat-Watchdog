@@ -30,8 +30,7 @@ class HeartbeatClient:
 
     def set_connection(self, server_list):
         for server in server_list:
-            print(server)
-            logging.info("INITIALISING CONNECTION TO " + str(server))
+            logging.debug("INITIALISING CONNECTION TO " + str(server))
             self.send_data(server=server)
 
     def send_data(self, server):
