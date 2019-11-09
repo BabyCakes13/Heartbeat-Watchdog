@@ -28,7 +28,7 @@ do
    # CENTRALISED HEARTBEAT
    if [ $CENTRALISED ] ; then 
      # setup the necesary files in the right directories
-     gcloud compute ssh centos-test-$i -- sed -i "s/whatsoever/centos-test-0/g" /tmp/heartbeat/heartbeat_client.service # prepare the client service by setting up the necessary server
+     gcloud compute ssh centos-test-$i -- sed -i "s/will_be_servers_spot/centos-test-0/g" /tmp/heartbeat/heartbeat_client.service # prepare the client service by setting up the necessary server
      gcloud compute ssh centos-test-$i -- sudo cp /tmp/heartbeat/*.service /etc/systemd/system/ # move the services from temp to systemd location
      gcloud compute ssh centos-test-$i -- sudo systemctl daemon-reload # reload system files in systemd
      
@@ -43,7 +43,7 @@ do
       server=$((($i+1)%6)) # the server for each instance will be the next instance (for 0, 5)
       client=$i
       
-      gcloud compute ssh centos-test-$client -- sed -i "s/whatsoever/centos-test-$server/g" /tmp/heartbeat/heartbeat_client.service # setup the client service with the actual server name
+      gcloud compute ssh centos-test-$client -- sed -i "s/will_be_servers_spot/centos-test-$server/g" /tmp/heartbeat/heartbeat_client.service # setup the client service with the actual server name
       gcloud compute ssh centos-test-$client -- sudo cp /tmp/heartbeat/*.service /etc/systemd/system/ # move the services to systemd location to systemd
       gcloud compute ssh centos-test-$client -- sudo systemctl daemon-reload # reload the system files in systemd
       gcloud compute ssh centos-test-$client -- sudo systemctl restart heartbeat_server.service # restart the services so the changes are made
@@ -55,7 +55,7 @@ do
       servers=`for s in $(seq 0 $NUM) ; do if [ "$s" -eq "$i" ] ; then continue ; fi ; echo -n "centos-test-$s\ " ; done ` 
       client=$i
       
-      gcloud compute ssh centos-test-$client -- sed -i "s/whatsoever/$servers/g" /tmp/heartbeat/heartbeat_client.service # pass all the servers except the current number
+      gcloud compute ssh centos-test-$client -- sed -i "s/will_be_servers_spot/$servers/g" /tmp/heartbeat/heartbeat_client.service # pass all the servers except the current number
       gcloud compute ssh centos-test-$client -- sudo cp /tmp/heartbeat/*.service /etc/systemd/system/ # from here same old same old
       gcloud compute ssh centos-test-$client -- sudo systemctl daemon-reload
       gcloud compute ssh centos-test-$client -- sudo systemctl restart heartbeat_server.service
