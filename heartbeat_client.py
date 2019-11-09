@@ -7,6 +7,9 @@ import logging
 
 
 class HeartbeatClient:
+    """
+    Class which handled the client instance.
+    """
     TCP_PORT = 5000
     BUFFER_SIZE = 1024
     HEARTBEAT_INCREMENT = 1
@@ -17,10 +20,9 @@ class HeartbeatClient:
         client to connect to.
         """
         self.heartbeat_counter = {}  # remember the heartbeat counter for each server in the server list separately
+        self.server_list = sys.argv[1:]
         for server in self.server_list:
             self.heartbeat_counter[server] = 0
-
-        self.server_list = sys.argv[1:]
 
         logging.basicConfig(format='%(levelname)s: %(asctime)s %(message)s', level=logging.INFO)
 
