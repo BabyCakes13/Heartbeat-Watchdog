@@ -71,8 +71,6 @@ class HeartbeatServer:
             self.handle_reconnect(received_heartbeat=received_heartbeat, address=address)
             self.heartbeats[address] = received_heartbeat
 
-            logging.info("HEARTBEAT: " + str(address) + " (" + str(self.heartbeats.get(address)) + ")")
-
         connection.close()
 
     def receive_data(self, connection):
