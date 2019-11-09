@@ -22,7 +22,7 @@ class HeartbeatServer:
         self.heartbeats = {}
         self.timestamps = {}
 
-        logging.basicConfig(format='%(levelname)s: %(asctime)s %(message)s', level=logging.DEBUG)
+        logging.basicConfig(format='%(levelname)s: %(asctime)s %(message)s', level=logging.INFO)
 
     def start_server(self):
         while 1:
