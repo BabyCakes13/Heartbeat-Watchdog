@@ -4,6 +4,7 @@ import socket
 import time
 import sys
 import logging
+import threading
 
 
 class HeartbeatClient:
@@ -32,9 +33,11 @@ class HeartbeatClient:
         heartbeat.
         :return: None
         """
+
+        self.set_connection()
+
         while 1:
-            self.set_connection()
-            time.sleep(self.HEARTBEAT_INCREMENT)
+            time.sleep(100)
 
     def set_connection(self):
         """
@@ -43,6 +46,9 @@ class HeartbeatClient:
         fails, the heartbeat is returned to 0. Otherwise, the first heartbeat caught by the server would not be 0.
         :return: None
         """
+        t = threading.Timer(1, self.set_connection)
+        t.start()
+
         for server in self.server_list:
             logging.debug("INITIALISING CONNECTION TO " + str(server))
             try:
@@ -71,3 +77,4 @@ class HeartbeatClient:
 if __name__ == "__main__":
     client = HeartbeatClient()
     client.start_client()
+
